@@ -25,6 +25,7 @@ public class CategoriaResource {
 		
 		Categoria cat = service.buscar(id);
 		return ResponseEntity.ok().body(cat);
+		
 //		Categoria cat1 = new Categoria(1, "Informática");
 //		Categoria cat2 = new Categoria(2, "Escritório");
 //		
