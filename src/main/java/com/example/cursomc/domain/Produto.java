@@ -32,7 +32,8 @@ public class Produto implements Serializable {
 	@OneToMany(mappedBy="id.produto")
 	private Set<ItemPedido> itens = new HashSet<ItemPedido>();
 	
-	@JsonBackReference
+//	@JsonBackReference
+	@JsonIgnore
 	@ManyToMany
 	@JoinTable(
 			name="produto_categoria", 
