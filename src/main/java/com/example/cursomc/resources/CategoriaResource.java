@@ -3,6 +3,7 @@ package com.example.cursomc.resources;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.example.cursomc.domain.Categoria;
+import com.example.cursomc.dto.CategoriaDTO;
 import com.example.cursomc.services.CategoriaService;
 
 @RestController
@@ -60,5 +62,19 @@ public class CategoriaResource {
 	public ResponseEntity<Void> delete(@PathVariable Integer id){
 		service.delete(id);
 		return ResponseEntity.noContent().build();
+	}
+	
+	@RequestMapping(method=RequestMethod.GET)
+	public ResponseEntity<List<CategoriaDTO>> findAll() {
+//		public ResponseEntity<?> find(@PathVariable Integer id) {
+		
+		List<Categoria> listCat = service.findAll();
+		//percorre a lista, elemento a elemento
+		// função map => mapeia cada elemento da lista aplicando uma função lambda
+		// função collect => devolve o resultado para uma nova lista através do argumento: Collectors.toList()
+		//converte a lista para outra lista
+		List<CategoriaDTO> listDto = listCat.stream().map(obj -> new CategoriaDTO(obj)).collect(Collectors.toList());
+		return ResponseEntity.ok().body(listDto);
+		
 	}
 }
