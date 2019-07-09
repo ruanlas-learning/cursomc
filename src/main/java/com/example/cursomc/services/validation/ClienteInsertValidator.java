@@ -6,13 +6,20 @@ import java.util.List;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.example.cursomc.domain.Cliente;
 import com.example.cursomc.domain.enums.TipoCliente;
 import com.example.cursomc.dto.ClienteNewDTO;
+import com.example.cursomc.repositories.ClienteRepository;
 import com.example.cursomc.resources.exception.FieldMessage;
 import com.example.cursomc.services.validation.utils.BR;
 
 public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert, ClienteNewDTO>{
 
+	@Autowired
+	private ClienteRepository repo;
+	
 	@Override
 	public void initialize(ClienteInsert constraintAnnotation) {
 //		ConstraintValidator.super.initialize(constraintAnnotation);
@@ -34,6 +41,11 @@ public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert
 				!BR.isValidCNPJ(objDto.getCpfOuCnpj())) {
 			list.add(new FieldMessage("cpfOuCnpj", "CNPJ inválido"));
 		}
+		Cliente aux = repo.findByEmail(objDto.getEmail());
+		if (aux != null) {
+			list.add(new FieldMessage("email", "Email já existente"));
+		}
+		
 		
 		// Adiciona as mensagens de erros "customizados" na lista de erros padrão do framework
 		for (FieldMessage fieldMessage : list) {
