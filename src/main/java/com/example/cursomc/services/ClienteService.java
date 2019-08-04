@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.cursomc.domain.Cidade;
 import com.example.cursomc.domain.Cliente;
@@ -40,6 +42,9 @@ public class ClienteService {
 	
 	@Autowired
 	private EnderecoRepository enderecoRepo;
+	
+	@Autowired
+	private FileStorageService fileStorageService;
 	
 	public Cliente find(Integer id) {
 		UserSS user = UserServices.authenticated();
@@ -111,5 +116,13 @@ public class ClienteService {
 		}
 		
 		return cli;
+	}
+	
+	public String uploadProfilePicture(MultipartFile multipartFile) {
+		return fileStorageService.storeFile(multipartFile);
+	}
+	
+	public Resource loadProfilePicture(String fileName) {
+		return fileStorageService.loadFileAsResource(fileName);
 	}
 }

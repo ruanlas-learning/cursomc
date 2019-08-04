@@ -94,11 +94,9 @@ public class FileStorageService {
                 return resource;
             } else {
                 throw new MyFileNotFoundException("Arquivo não encontrado " + fileName);
-//                System.out.println("Arquivo não encontrado " + fileName);
             }
         } catch (MalformedURLException ex) {
             throw new MyFileNotFoundException("Arquivo não encontrado " + fileName, ex);
-//        	System.out.println("Arquivo não encontrado " + fileName);
         }
     }
 
@@ -110,11 +108,9 @@ public class FileStorageService {
                 return resource;
             } else {
                 throw new MyFileNotFoundException("Arquivo não encontrado " + path + "/" + fileName);
-//                System.out.println("Arquivo não encontrado " + fileName);
             }
         } catch (MalformedURLException ex) {
             throw new MyFileNotFoundException("Arquivo não encontrado " + path + "/" + fileName);
-//        	System.out.println("Arquivo não encontrado " + fileName);
         }
     }
 }

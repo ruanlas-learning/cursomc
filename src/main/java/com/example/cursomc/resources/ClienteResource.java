@@ -1,14 +1,20 @@
 package com.example.cursomc.resources;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.example.cursomc.domain.Cliente;
@@ -32,6 +39,8 @@ public class ClienteResource {
 	
 	@Autowired
 	private ClienteService service;
+	
+	private static final Logger logger = LoggerFactory.getLogger(FilesResource.class);
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.GET)
 	public ResponseEntity<Cliente> find(@PathVariable Integer id) {
@@ -96,4 +105,37 @@ public class ClienteResource {
 		return ResponseEntity.ok().body(listDto);
 		
 	}
+	
+	@RequestMapping(value="/picture", method=RequestMethod.POST)
+	public ResponseEntity<Void> uploadProfilePicture(@RequestParam(name="file") MultipartFile multipartFile){
+		String fileName = service.uploadProfilePicture(multipartFile);
+		URI uri = ServletUriComponentsBuilder
+				.fromCurrentRequest()
+//				.fromCurrentContextPath()
+//				.path("/clientes")
+//				.path("/picture")
+				.path("/{fileName}").buildAndExpand(fileName).toUri();
+		return ResponseEntity.created(uri).build();
+	}
+	
+	@RequestMapping(value="/picture/{fileName:.+}", method=RequestMethod.GET)
+	public ResponseEntity<Resource> showFile(@PathVariable String fileName, HttpServletRequest request) {
+        Resource resource = service.loadProfilePicture(fileName);
+
+        String contentType = null;
+        try {
+            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+        } catch (IOException ex) {
+            logger.info("Não foi possível determinar o tipo de arquivo.");
+//        	System.out.println("Não foi possível determinar o tipo de arquivo.");
+        }
+
+        if(contentType == null) {
+            contentType = "application/octet-stream";
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .body(resource);
+    }
 }
