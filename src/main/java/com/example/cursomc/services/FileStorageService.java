@@ -15,8 +15,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.cursomc.property.FileStorageProperties;
-import com.example.cursomc.resources.exception.FileStorageException;
-import com.example.cursomc.resources.exception.MyFileNotFoundException;
+import com.example.cursomc.services.exceptions.FileStorageException;
+import com.example.cursomc.services.exceptions.MyFileNotFoundException;
 
 @Service
 public class FileStorageService {

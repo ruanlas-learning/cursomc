@@ -1,4 +1,4 @@
-package com.example.cursomc.resources.exception;
+package com.example.cursomc.services.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

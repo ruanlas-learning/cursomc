@@ -1,4 +1,4 @@
-package com.example.cursomc.resources.exception;
+package com.example.cursomc.services.exceptions;
 
 public class FileStorageException extends RuntimeException {
 
