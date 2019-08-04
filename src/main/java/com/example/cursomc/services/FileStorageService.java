@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.cursomc.property.FileStorageProperties;
 import com.example.cursomc.services.exceptions.FileStorageException;
+import com.example.cursomc.services.exceptions.FileStoragePathInvalidException;
 import com.example.cursomc.services.exceptions.MyFileNotFoundException;
 
 @Service
@@ -48,7 +49,7 @@ public class FileStorageService {
         try {
             // Check if the file's name contains invalid characters
             if(fileName.contains("..")) {
-                throw new FileStorageException("Desculpe! O nome do arquivo contém o path " + fileName + " inválido");
+                throw new FileStoragePathInvalidException("Desculpe! O nome do arquivo contém o path " + fileName + " inválido");
 //                System.out.println("Desculpe! O nome do arquivo contém o path " + fileName + " inválido");
             }
 
@@ -70,7 +71,7 @@ public class FileStorageService {
         try {
             // Check if the file's name contains invalid characters
             if(fileName.contains("..")) {
-                throw new FileStorageException("Desculpe! O nome do arquivo contém o path " + fileName + " inválido");
+                throw new FileStoragePathInvalidException("Desculpe! O nome do arquivo contém o path " + fileName + " inválido");
 //                System.out.println("Desculpe! O nome do arquivo contém o path " + fileName + " inválido");
             }
 
