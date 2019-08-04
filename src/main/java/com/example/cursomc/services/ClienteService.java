@@ -1,5 +1,6 @@
 package com.example.cursomc.services;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.example.cursomc.domain.Cidade;
 import com.example.cursomc.domain.Cliente;
@@ -119,7 +121,22 @@ public class ClienteService {
 	}
 	
 	public String uploadProfilePicture(MultipartFile multipartFile) {
-		return fileStorageService.storeFile(multipartFile);
+		UserSS user = UserServices.authenticated();
+		if (user == null) {
+			throw new AuthorizationException("Acesso negado");
+		}
+		String fileName = fileStorageService.storeFile(multipartFile);
+		URI uri = ServletUriComponentsBuilder
+				.fromCurrentRequest()
+				.path("/{fileName}").buildAndExpand(fileName).toUri();
+		
+		Optional<Cliente> optionalCli = repo.findById(user.getId());
+		Cliente cli = optionalCli.orElseThrow(() -> new ObjectNotFoundException(
+				"Objeto não Encontrado! Id: " + user.getId() + ", Tipo: " + Cliente.class.getName() ));
+		cli.setImageUrl(uri.toString());
+		repo.save(cli);
+		
+		return fileName;
 	}
 	
 	public Resource loadProfilePicture(String fileName) {
