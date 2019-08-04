@@ -1,10 +1,12 @@
 package com.example.cursomc.services;
 
+import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -47,6 +49,12 @@ public class ClienteService {
 	
 	@Autowired
 	private FileStorageService fileStorageService;
+	
+	@Autowired
+	private ImageService imageService;
+	
+	@Value("${img.prefix.client.profile}")
+	private String prefix;
 	
 	public Cliente find(Integer id) {
 		UserSS user = UserServices.authenticated();
@@ -125,18 +133,18 @@ public class ClienteService {
 		if (user == null) {
 			throw new AuthorizationException("Acesso negado");
 		}
-		String fileName = fileStorageService.storeFile(multipartFile);
-		URI uri = ServletUriComponentsBuilder
-				.fromCurrentRequest()
-				.path("/{fileName}").buildAndExpand(fileName).toUri();
 		
-		Optional<Cliente> optionalCli = repo.findById(user.getId());
-		Cliente cli = optionalCli.orElseThrow(() -> new ObjectNotFoundException(
-				"Objeto não Encontrado! Id: " + user.getId() + ", Tipo: " + Cliente.class.getName() ));
-		cli.setImageUrl(uri.toString());
-		repo.save(cli);
+		BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
+		String fileName = prefix + user.getId() + ".jpg";
 		
-		return fileName;
+		return fileStorageService.storeFile(imageService.getInputStream(jpgImage, "jpg"), fileName, "image");
+		
+//		String fileName = fileStorageService.storeFile(multipartFile);
+//		URI uri = ServletUriComponentsBuilder
+//				.fromCurrentRequest()
+//				.path("/{fileName}").buildAndExpand(fileName).toUri();
+		
+//		return fileName;
 	}
 	
 	public Resource loadProfilePicture(String fileName) {

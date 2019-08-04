@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.example.cursomc.services.exceptions.AuthorizationException;
 import com.example.cursomc.services.exceptions.DataIntegrityException;
+import com.example.cursomc.services.exceptions.FileException;
 import com.example.cursomc.services.exceptions.FileStoragePathInvalidException;
 import com.example.cursomc.services.exceptions.MyFileNotFoundException;
 import com.example.cursomc.services.exceptions.ObjectNotFoundException;
@@ -41,6 +42,13 @@ public class ResourceExceptionHandler {
 	
 	@ExceptionHandler(FileStoragePathInvalidException.class)
 	public ResponseEntity<StandardError> invalidFilePath(FileStoragePathInvalidException e, HttpServletRequest request){
+		
+		StandardError err = new StandardError(HttpStatus.BAD_REQUEST.value(), e.getMessage(), System.currentTimeMillis());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(err);
+	}
+	
+	@ExceptionHandler(FileException.class)
+	public ResponseEntity<StandardError> invalidFile(FileException e, HttpServletRequest request){
 		
 		StandardError err = new StandardError(HttpStatus.BAD_REQUEST.value(), e.getMessage(), System.currentTimeMillis());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(err);

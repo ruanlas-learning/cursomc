@@ -1,6 +1,7 @@
 package com.example.cursomc.services;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -86,6 +87,37 @@ public class FileStorageService {
 //            System.out.println("Não foi possível armazenar o arquivo " + fileName + ". Por favor, tente novamente!");
         }
     }
+	
+	public String storeFile(InputStream inputStream, String fileName, String contentType) {
+		try {
+			if(fileName.contains("..")) {
+				throw new FileStoragePathInvalidException("Desculpe! O nome do arquivo contém o path " + fileName + " inválido");
+			}
+			
+			// Copy file to the target location (Replacing existing file with the same name)
+			Path targetLocation = this.fileStorageLocation.resolve(fileName);
+			Files.copy(inputStream, targetLocation, StandardCopyOption.REPLACE_EXISTING);
+			return fileName;
+		} catch (IOException ex) {
+			throw new FileStorageException("Não foi possível armazenar o arquivo " + fileName + ". Por favor, tente novamente!", ex);
+		}
+	}
+	
+	public String storeFile(InputStream inputStream, String fileName, String contentType, String path) {
+		try {
+			if(fileName.contains("..")) {
+				throw new FileStoragePathInvalidException("Desculpe! O nome do arquivo contém o path " + fileName + " inválido");
+			}
+			
+			// Copy file to the target location (Replacing existing file with the same name)
+			Path targetLocation = this.fileStorageLocation.resolve(path).resolve(fileName);
+			Files.createDirectories(targetLocation);
+			Files.copy(inputStream, targetLocation, StandardCopyOption.REPLACE_EXISTING);
+			return fileName;
+		} catch (IOException ex) {
+			throw new FileStorageException("Não foi possível armazenar o arquivo " + fileName + ". Por favor, tente novamente!", ex);
+		}
+	}
 	
 	public Resource loadFileAsResource(String fileName) {
         try {
