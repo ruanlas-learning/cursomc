@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 import com.example.cursomc.domain.Categoria;
 import com.example.cursomc.domain.Cidade;
@@ -22,6 +23,7 @@ import com.example.cursomc.domain.Pedido;
 import com.example.cursomc.domain.Produto;
 import com.example.cursomc.domain.enums.EstadoPagamento;
 import com.example.cursomc.domain.enums.TipoCliente;
+import com.example.cursomc.property.FileStorageProperties;
 import com.example.cursomc.repositories.CategoriaRepository;
 import com.example.cursomc.repositories.CidadeRepository;
 import com.example.cursomc.repositories.ClienteRepository;
@@ -33,6 +35,9 @@ import com.example.cursomc.repositories.PedidoRepository;
 import com.example.cursomc.repositories.ProdutoRepository;
 
 @SpringBootApplication
+@EnableConfigurationProperties({
+    FileStorageProperties.class
+})
 public class CursomcApplication implements CommandLineRunner{
 	
 	public static void main(String[] args) {
